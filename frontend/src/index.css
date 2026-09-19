@@ -1,0 +1,19 @@
+* {
+	box-sizing: border-box;
+}
+
+#root {
+	min-height: 100svh;
+	display: flex;
+	flex-direction: column;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100svh;
+	background-color: aqua;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3 { margin: 0; }
