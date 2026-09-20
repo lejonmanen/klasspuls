@@ -9,8 +9,10 @@ const Start = ({  }: Props) => {
 			<p> Välkommen till klasspuls! </p>
 			<p> Är du här som lärare eller student? </p>
 
-			<Link to="/t"> Lärare </Link>
-			<Link to="/s"> Student </Link>
+			<div className="row">
+				<Link to="/t" className="btn big-button"> Lärare </Link>
+				<Link to="/s" className="btn big-button"> Student </Link>
+			</div>
 		</div>
 	)
 }
