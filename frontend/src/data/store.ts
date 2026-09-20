@@ -5,6 +5,7 @@ type Store = {
 	session: Session;
 	question: Question;
 	answerHistory: HistoryQuestion[];
+	// account: StudentAnonymous | StudentAccount;
 
 	setSession: (x: Session) => void;
 	setQuestion: (q: Question) => void;
@@ -20,6 +21,7 @@ const useStore = create<Store>(set => ({
 		status: 'unstarted'
 	},
 	answerHistory: [],
+	// account: { id: '' },
 
 	setSession: newSession => set({
 		session: { ...newSession }

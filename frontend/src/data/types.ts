@@ -10,8 +10,12 @@ export type TeacherSession = {
 export type StudentSession = {
 	isTeacher: false;
 	id: string;
+	alias?: string;
 }
 export type Session = TeacherSession | StudentSession;
+
+// export type StudentAnonymous = { id: string; }
+// export type StudentAccount = { id: string; alias: string; }
 
 
 export type Question =

@@ -11,7 +11,7 @@ const Start = ({  }: Props) => {
 
 			<div className="row">
 				<Link to="/t" className="btn big-button"> Lärare </Link>
-				<Link to="/s" className="btn big-button"> Student </Link>
+				<Link to="/join" className="btn big-button"> Student </Link>
 			</div>
 		</div>
 	)
