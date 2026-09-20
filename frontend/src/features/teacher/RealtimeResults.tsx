@@ -1,6 +1,6 @@
 import { useStore } from "../../data/store"
 import type { Question, Session } from "../../data/types"
-import { useStatistics } from "./statistics"
+import { useStatistics } from "../../data/statistics"
 
 
 const RealtimeResults = () => {

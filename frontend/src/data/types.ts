@@ -1,4 +1,3 @@
-// TODO datatyper för kommunikationen osv.
 
 export type TeacherSession = {
 	isTeacher: true;

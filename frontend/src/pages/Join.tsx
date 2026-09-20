@@ -23,7 +23,8 @@ const Join = () => {
 	const handleJoin = async () => {
 		set({ id: form.code, isTeacher: false, alias: form.alias })
 		nav('/s')
-		// TODO server, register this student
+		// TODO server, register this student. Servern behöver svara med: status för eventuellt pågående fråga.
+		// TODO sätt upp ett intervall som pollar servern regelbundet för eventuellt pågående fråga. När studenten väljer att lämna sessionen ska servern kunna svara det
 	}
 
 	return (

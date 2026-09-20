@@ -1,4 +1,4 @@
-import type { Question, QuestionResponse } from "../../data/types"
+import type { Question, QuestionResponse } from "./types"
 
 type Result = {
 	average: number; values: number; skips: number; max: number; min: number;
@@ -6,6 +6,7 @@ type Result = {
 
 export function useStatistics(q: Question): Result {
 	let average = NaN, values = 0, skips = 0, max = NaN, min = NaN
+	// Skala: 1-5
 	// TODO: vilken statistik vill vi visa?
 	// Eftersom studenterna drar en markör på en skala när de röstar, kommer vi få decimala värden.
 	// medel, max, min, antal röster

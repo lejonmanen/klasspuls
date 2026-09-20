@@ -18,4 +18,11 @@ function pick(array: string[], count: number = 1): string {
 
 // ----------------------------------------------------
 
+/**
+ * score är ett värde mellan 1-5
+ */
+export function displayScore(n: number): string {
+	// Avrunda till två decimaler
+	return (Math.round(n * 100) / 100).toFixed(2)
+}
 
