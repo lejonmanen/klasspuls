@@ -1,6 +1,6 @@
 import express from 'express'
 import { generateId } from '../../../packages/shared/utils.ts'
-import { type ErrorResponse, type IdBody, type IdResponse } from '../../../packages/shared/types.ts'
+import { type ErrorResponse, type IdBody, type IdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse } from '../../../packages/shared/types.ts'
 
 
 const router = express.Router()
@@ -9,12 +9,13 @@ type ServerSession = {
 	id: string;
 	teacherId: string;
 	studentIds: string[];
+	questionActive: boolean;
 }
 const sessions: Map<string, ServerSession> = new Map()
 
 /*
 [x] teacher, request new session
-[ ] teacher, close session
+[x] teacher, close session
 [ ] request open question
 [ ] request close question
 [ ] server, register this student. Servern behöver svara med: status för eventuellt pågående fråga.
@@ -41,7 +42,8 @@ router.post<{}, IdResponse | ErrorResponse, IdBody>('/session', (req, res) => {
 	sessions.set(id, {
 		id,
 		teacherId,
-		studentIds: []
+		studentIds: [],
+		questionActive: false
 	})
 	console.log(`Created new session: ${teacherId}.`)
 	res.status(200).send({ id: teacherId })
@@ -58,5 +60,49 @@ router.delete<IdParam, void>('/session/:id', (req, res) => {
 	}
 	res.sendStatus(404)
 })
+
+
+// POST /api/poll/student/:sessionId, body { ?? }
+router.post<IdParam, StudentPollResponse, StudentBody>('/poll/student/:id', (req, res) => {
+	const id = req.params.id
+	const s = sessions.get(id)
+	if( !id || !s) {
+		res.send({
+			code: 404,
+			message: 'No session or session closed.',
+			questionActive: false
+		})
+		return
+	}
+
+	res.send({
+		code: 200,
+		message: 'Ok',
+		questionActive: s.questionActive
+	})
+})
+
+// POST /api/poll/teacher/:sessionId
+router.post<IdParam, TeacherPollResponse>('/poll/teacher/:sessionId', (req, res) => {
+	const sid = req.params.id
+	const s = sessions.get(sid)
+	if( !sid || !s ) {
+		res.send({
+			code: 404,
+			message: 'No session or session closed.',
+			questionActive: false,
+			participants: []
+		})
+		return
+	}
+
+	res.send({
+		code: 200,
+		message: 'Ok',
+		questionActive: s.questionActive,
+		participants: s.studentIds
+	})
+})
+
 
 export default router
