@@ -14,14 +14,14 @@ const Join = () => {
 
 	useEffect(() => {
 		if( params.code ) {
-			set({ id: params.code, isTeacher: false
+			set({ uid: params.code, isTeacher: false
 			})
 			nav(`/s`)
 		}
 	}, [params])
 
 	const handleJoin = async () => {
-		set({ id: form.code, isTeacher: false, alias: form.alias })
+		set({ uid: form.code, isTeacher: false, alias: form.alias })
 		nav('/s')
 		// TODO server, register this student. Servern behöver svara med: status för eventuellt pågående fråga.
 		// TODO sätt upp ett intervall som pollar servern regelbundet för eventuellt pågående fråga. När studenten väljer att lämna sessionen ska servern kunna svara det

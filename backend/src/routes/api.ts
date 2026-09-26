@@ -1,17 +1,18 @@
 import express from 'express'
 import { generateId } from '../../../packages/shared/utils.ts'
-import { type ErrorResponse, type IdBody, type IdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse } from '../../../packages/shared/types.ts'
+import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam } from '../../../packages/shared/types.ts'
 
 
 const router = express.Router()
 
 type ServerSession = {
-	id: string;
+	sid: string;  // session id
 	teacherId: string;
 	studentIds: string[];
 	questionActive: boolean;
 }
-const sessions: Map<string, ServerSession> = new Map()
+// const sessions: Map<string, ServerSession> = new Map()
+const sessions: ServerSession[] = []
 
 /*
 [x] teacher, request new session
@@ -32,41 +33,48 @@ type IdParam = { id: string; }
 
 
 // POST /api/session, body: { id }
-router.post<{}, IdResponse | ErrorResponse, IdBody>('/session', (req, res) => {
-	const id = req.body?.id
-	if( sessions.has(id) ) {
-		res.status(400).send({ message: 'Session already created' })
+router.post<{}, SessionIdResponse | ErrorResponse, TeacherIdBody>('/session', (req, res) => {
+	const uid = req.body?.uid
+	const s = sessions.find(x => x.teacherId === uid)
+	if( s ) {
+		res.status(400).send({ message: `You already have a session: ${s.sid}.` })
 		return
 	}
-	const teacherId = generateId()
-	sessions.set(id, {
-		id,
-		teacherId,
+	const sid = generateId()
+	sessions.push({
+		sid,
+		teacherId: uid,
 		studentIds: [],
 		questionActive: false
 	})
-	console.log(`Created new session: ${teacherId}.`)
-	res.status(200).send({ id: teacherId })
+	console.log(`Created new session: ${sid}.`)
+	res.status(200).send({ sid })
 })
 
-// DELETE /api/session/:id
-router.delete<IdParam, void>('/session/:id', (req, res) => {
-	const id = req.params.id
-	if( sessions.has(id) ) {
-		sessions.delete(id)
+// DELETE /api/session/:sid
+router.delete<SessionIdParam, void>('/session/:sid', (req, res) => {
+	const sid = req.params.sid
+	const s = sessions.find(x => x.sid === sid)
+	if( s ) {
+		deleteFromArray(sessions, x => x.sid !== sid)
 		res.sendStatus(204)
-		console.log(`Deleted session: ${id}.`)
+		console.log(`Deleted session: ${sid}.`)
 		return
 	}
 	res.sendStatus(404)
 })
+function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
+	const index = array.findIndex(item => condition(item))
+	array.splice(index, 1)
+	console.log(`Array after deletion`, array)
+}
 
 
 // POST /api/poll/student/:sessionId, body { ?? }
-router.post<IdParam, StudentPollResponse, StudentBody>('/poll/student/:id', (req, res) => {
-	const id = req.params.id
-	const s = sessions.get(id)
-	if( !id || !s) {
+router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/student/:sid', (req, res) => {
+	const sid = req.params.sid
+	const s = sessions.find(x => x.sid === sid)
+	if( !sid || !s) {
 		res.send({
 			code: 404,
 			message: 'No session or session closed.',
@@ -83,9 +91,9 @@ router.post<IdParam, StudentPollResponse, StudentBody>('/poll/student/:id', (req
 })
 
 // POST /api/poll/teacher/:sessionId
-router.post<IdParam, TeacherPollResponse>('/poll/teacher/:sessionId', (req, res) => {
-	const sid = req.params.id
-	const s = sessions.get(sid)
+router.post<SessionIdParam, TeacherPollResponse>('/poll/teacher/:sessionId', (req, res) => {
+	const sid = req.params.sid
+	const s = sessions.find(x => x.sid === sid)
 	if( !sid || !s ) {
 		res.send({
 			code: 404,

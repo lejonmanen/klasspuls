@@ -1,14 +1,15 @@
 
 export type TeacherSession = {
 	isTeacher: true;
-	id: string;
+	sid: string;
+	uid: string;
 	connectedCount: number;  // levande anslutningar
 	lostCount: number;  // tappat anslutning
 	messages: string[];
 }
 export type StudentSession = {
 	isTeacher: false;
-	id: string;
+	uid: string;
 	alias?: string;
 }
 export type Session = TeacherSession | StudentSession;

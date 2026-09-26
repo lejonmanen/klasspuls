@@ -25,3 +25,8 @@ export function displayScore(n: number): string {
 	return (Math.round(n * 100) / 100).toFixed(2)
 }
 
+
+export function getErrorMessage(error: unknown): string {
+	return (error instanceof Error) ? error.message : String(error)
+}
+

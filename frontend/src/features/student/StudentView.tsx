@@ -14,7 +14,7 @@ const StudentView = () => {
 
 	const handleLeave = () => {
 		// TODO server, unregister student
-		set({ isTeacher: false, id: '', alias: 'utloggad' })
+		set({ isTeacher: false, uid: '', alias: 'utloggad' })
 		nav('/')
 	}
 

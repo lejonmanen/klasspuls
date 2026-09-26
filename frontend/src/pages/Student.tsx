@@ -19,14 +19,14 @@ const Student = () => {
 			return
 		}
 		// Om vi inte har något session id, navigera till /join
-		if( !s.id ) {
+		if( !s.uid ) {
 			nav('/join')
 		}
 	}, [s, params])
 
 	return (
 		<div className="student-view">
-			{s.id ? (
+			{s.uid ? (
 				<StudentView />
 			) : (
 				<p> Felaktig sessions-kod. </p>

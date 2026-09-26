@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { HistoryQuestion, Question, Session } from './types.ts'
+import { generateId } from './utils.ts';
 
 type Store = {
 	session: Session;
@@ -15,7 +16,7 @@ const useStore = create<Store>(set => ({
 
 	session: {
 		isTeacher: false,
-		id: ''
+		uid: generateId()
 	},
 	question: {
 		status: 'unstarted'
