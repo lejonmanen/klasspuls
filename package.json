@@ -1,0 +1,17 @@
+{
+  "name": "klasspuls",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "restart:backend": "npm run restart --workspace=backend",
+	"start:backend": "npm run start --workspace=backend",
+	"dev:frontend": "npm run dev --workspace=frontend",
+	"build": "npm run build --workspaces"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "workspaces": ["backend", "frontend"]
+}
