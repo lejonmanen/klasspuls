@@ -1,9 +1,7 @@
 import * as z from 'zod'
-import { Link } from "react-router"
 import { useStore } from "../../data/store"
 import type { Session, TeacherSession } from "../../data/types"
 import { getErrorMessage } from "../../data/utils"
-import { ExternalLink } from "lucide-react"
 import { schemas } from '../../../../packages/shared/types.ts'
 
 type Props = {}
@@ -75,7 +73,7 @@ const ManageSession = ({  }: Props) => {
 					<button className="btn" onClick={handleCloseSession}> Avsluta session </button>
 
 					<p> Pågående session: <code> {s.sid} </code> </p>
-					{s.uid && <Link to={'/code/' + s.sid} className="btn" target="_blank"> Visa kod <ExternalLink /> </Link> }
+					{/* {s.uid && <Link to={'/code/' + s.sid} className="btn" target="_blank"> Visa kod <ExternalLink /> </Link> } */}
 				</div>
 			) : (
 				<button className="btn" onClick={handleNewSession}> Starta ny session </button>

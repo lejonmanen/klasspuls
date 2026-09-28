@@ -70,8 +70,8 @@ function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
 }
 
 
-// POST /api/poll/student/:sessionId, body { ?? }
-router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/student/:sid', (req, res) => {
+// POST /api/poll/s/:sessionId, body { ?? }
+router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/s/:sid', (req, res) => {
 	const sid = req.params.sid
 	const s = sessions.find(x => x.sid === sid)
 	if( !sid || !s) {
@@ -90,8 +90,8 @@ router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/student/:si
 	})
 })
 
-// POST /api/poll/teacher/:sessionId
-router.post<SessionIdParam, TeacherPollResponse>('/poll/teacher/:sessionId', (req, res) => {
+// POST /api/poll/t/:sessionId
+router.post<SessionIdParam, TeacherPollResponse>('/poll/t/:sessionId', (req, res) => {
 	const sid = req.params.sid
 	const s = sessions.find(x => x.sid === sid)
 	if( !sid || !s ) {
@@ -112,5 +112,16 @@ router.post<SessionIdParam, TeacherPollResponse>('/poll/teacher/:sessionId', (re
 	})
 })
 
+
+// TODO
+// POST /api/question/t/:sessionId - sätt igång fråga
+router.post<SessionIdParam, void>('/question/t/:sid', (req, res) => {
+	// om existerande fråga, felkod 400?
+	// annars starta ny fråga, kod 204
+})
+
+
+// TODO
+// DELETE /api/question/t/:sessionId - avsluta fråga
 
 export default router
