@@ -5,11 +5,13 @@ import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionId
 
 const router = express.Router()
 
+type Answer = { value: number; studentId: string; }
 type ServerSession = {
 	sid: string;  // session id
 	teacherId: string;
 	studentIds: string[];
 	questionActive: boolean;
+	answers: Answer[];
 }
 // const sessions: Map<string, ServerSession> = new Map()
 const sessions: ServerSession[] = []
@@ -45,7 +47,8 @@ router.post<{}, SessionIdResponse | ErrorResponse, TeacherIdBody>('/session', (r
 		sid,
 		teacherId: uid,
 		studentIds: [],
-		questionActive: false
+		questionActive: false,
+		answers: []
 	})
 	console.log(`Created new session: ${sid}.`)
 	res.status(200).send({ sid })
@@ -70,11 +73,11 @@ function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
 }
 
 
-// POST /api/poll/s/:sessionId, body { ?? }
-router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/s/:sid', (req, res) => {
+// GET /api/poll/s/:sessionId
+router.get<SessionIdParam, StudentPollResponse>('/poll/s/:sid', (req, res) => {
 	const sid = req.params.sid
 	const s = sessions.find(x => x.sid === sid)
-	if( !sid || !s) {
+	if( !s) {
 		res.send({
 			code: 404,
 			message: 'No session or session closed.',
@@ -90,11 +93,11 @@ router.post<SessionIdParam, StudentPollResponse, StudentBody>('/poll/s/:sid', (r
 	})
 })
 
-// POST /api/poll/t/:sessionId
-router.post<SessionIdParam, TeacherPollResponse>('/poll/t/:sessionId', (req, res) => {
+// GET /api/poll/t/:sessionId
+router.get<SessionIdParam, TeacherPollResponse>('/poll/t/:sid', (req, res) => {
 	const sid = req.params.sid
 	const s = sessions.find(x => x.sid === sid)
-	if( !sid || !s ) {
+	if( !s ) {
 		res.send({
 			code: 404,
 			message: 'No session or session closed.',
@@ -113,15 +116,40 @@ router.post<SessionIdParam, TeacherPollResponse>('/poll/t/:sessionId', (req, res
 })
 
 
-// TODO
 // POST /api/question/t/:sessionId - sätt igång fråga
-router.post<SessionIdParam, void>('/question/t/:sid', (req, res) => {
+router.post<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, res) => {
 	// om existerande fråga, felkod 400?
 	// annars starta ny fråga, kod 204
+	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
+
+	if( !s ) {
+		res.status(400).send({ message: 'Starta en session innan du öppnar en fråga.' })
+		return
+	}
+	if( s.questionActive ) {
+		res.status(400).send({ message: 'Det finns redan en pågående fråga.' })
+		return
+	}
+	s.answers = []
+	s.questionActive = true
+	res.sendStatus(204)
 })
 
 
-// TODO
 // DELETE /api/question/t/:sessionId - avsluta fråga
+router.delete<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, res) => {
+	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
+
+	if( !s ) {
+		res.status(400).send({ message: 'Starta en session innan du stänger en fråga.' })
+		return
+	}
+	if( !s.questionActive ) {
+		res.status(400).send({ message: 'Det finns ingen fråga att stänga.' })
+		return
+	}
+	s.questionActive = false
+	res.sendStatus(204)
+})
 
 export default router
