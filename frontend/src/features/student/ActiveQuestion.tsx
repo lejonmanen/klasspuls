@@ -1,15 +1,25 @@
-import type { Question } from "../../data/types"
+import { answerQuestion } from "../../data/api-f"
+import { useStore } from "../../data/store"
+import type { QuestionS } from "../../data/types"
 
-type Props = { q: Question }
+type Props = { q: QuestionS }
 
 const ActiveQuestion = ({ q }: Props) => {
-	if( q.status !== "active" ) return null  // bara för TypeScript
+	const uid = useStore(state => state.session.uid)
+	const sid = useStore(state => state.session.sid)
+	if( q !== "active" ) return null  // bara för TypeScript
+
+	const handleAnswer = async () => {
+		await answerQuestion(sid, 3.5, uid)
+	}
 
 	// TODO really cool slider!
 	return (
 		<div className="active-question">
-			active q:
-			{String(q.responses)}
+			slider plz
+			{q}
+
+			<button onClick={handleAnswer}> TEMP svara 3.5 </button>
 		</div>
 	)
 }

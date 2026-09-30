@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router"
 import { useStore } from "../data/store";
 import type { StudentSession } from "../data/types";
 import { useEffect, useState } from "react";
+import { generateId } from "../data/utils";
 
 type ExpectCode = { code: string; }
 type Form = { code: string; alias: string; }
@@ -14,17 +15,18 @@ const Join = () => {
 
 	useEffect(() => {
 		if( params.code ) {
-			set({ uid: params.code, isTeacher: false
+			// Om route innehåller "code" använd den som session id
+			set({ uid: generateId(), isTeacher: false, sid: params.code
 			})
 			nav(`/s`)
 		}
 	}, [params])
 
 	const handleJoin = async () => {
-		set({ uid: form.code, isTeacher: false, alias: form.alias })
+		// När vi är klara med formuläret, använd det användaren skrivit som session id
+		set({ uid: generateId(), isTeacher: false, alias: form.alias, sid: form.code })
 		nav('/s')
 		// TODO server, register this student. Servern behöver svara med: status för eventuellt pågående fråga.
-		// TODO sätt upp ett intervall som pollar servern regelbundet för eventuellt pågående fråga. När studenten väljer att lämna sessionen ska servern kunna svara det
 	}
 
 	return (
@@ -36,7 +38,7 @@ const Join = () => {
 				<input
 					type="text"
 					value={form.code}
-					onChange={e => setForm({ ...form, code: e.target.value })}
+					onChange={e => setForm({ ...form, code: e.target.value.toLocaleUpperCase() })}
 					/>
 				</div>
 

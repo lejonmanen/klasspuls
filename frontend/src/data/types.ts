@@ -9,6 +9,7 @@ export type TeacherSession = {
 }
 export type StudentSession = {
 	isTeacher: false;
+	sid: string;
 	uid: string;
 	alias?: string;
 }
@@ -17,6 +18,8 @@ export type Session = TeacherSession | StudentSession;
 // export type StudentAnonymous = { id: string; }
 // export type StudentAccount = { id: string; alias: string; }
 
+
+export type QuestionS = 'unstarted' | 'active' | 'ended'
 
 export type Question =
 	| {

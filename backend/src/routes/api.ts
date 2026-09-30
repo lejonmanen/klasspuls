@@ -1,44 +1,34 @@
 import express, { type RequestHandler } from 'express'
 import { generateId } from '../../../packages/shared/utils.ts'
-import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam, schemas } from '../../../packages/shared/types.ts'
+import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam, schemas, type StudentAnswer } from '../../../packages/shared/types.ts'
 import * as z from 'zod'
 
 
 const router = express.Router()
 
-type Answer = { value: number; studentId: string; }
 type ServerSession = {
 	sid: string;  // session id
 	teacherId: string;
 	studentIds: string[];
 	questionActive: boolean;
-	answers: Answer[];
+	answers: StudentAnswer[];
 }
-// const sessions: Map<string, ServerSession> = new Map()
+
 const sessions: ServerSession[] = []
 
-/*
-[x] teacher, request new session
-[x] teacher, close session
-[ ] request open question
-[ ] request close question
-[ ] server, register this student. Servern behöver svara med: status för eventuellt pågående fråga.
-[ ] unregister student
-[ ] poll - "vad händer" - för student och teacher
-*/
+// TODO route to remove participant from session so we know how many are still active
+// TODO add date/time created to session to remove older sessions after a while
 
-// TODO: remove test route
-router.get('/', (req, res) => {
-	res.send('GET success')
-})
 
-type IdParam = { id: string; }
+
 
 
 const validateSid: RequestHandler = (req, res, next) => {
 	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
 	if( !s ) {
 		res.status(400).send({ message: 'Ingen pågående session.' })
+		console.log(`>> validateSid: Ingen pågående session. (${req.params.sid})`)
+		console.log(`>> sessions`, sessions)
 		return
 	}
 	next()
@@ -47,9 +37,17 @@ const validateAnswer: RequestHandler = (req, res, next) => {
 	const parsed = z.safeParse(schemas.studentAnswer, req.body)
 	if( !parsed.success ) {
 		res.status(400).send({ message: 'Felaktigt format på studentens svar.' })
+		console.log(`>> validateAnswer: Felaktigt format på studentens svar. ${JSON.stringify(req.body)}`)
 		return
 	}
 	next()
+}
+function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
+	// console.log(`Array before deletion`, array)
+	const index = array.findIndex(item => condition(item))
+	array.splice(index, 1)
+	// console.log(`Array after deletion `, array)
+	// console.log(`Array index was`, index)
 }
 
 
@@ -78,40 +76,41 @@ router.delete<SessionIdParam, void>('/session/:sid', (req, res) => {
 	const sid = req.params.sid
 	const s = sessions.find(x => x.sid === sid)
 	if( s ) {
-		deleteFromArray(sessions, x => x.sid !== sid)
-		res.sendStatus(204)
-		console.log(`Deleted session: ${sid}.`)
+		sessions.splice(0, sessions.length)
+		console.log(`Deleted all sessions`)
+		// LATER don't delete all sessions every time
+		// deleteFromArray(sessions, x => x.sid !== sid)
+		// res.sendStatus(204)
+		// console.log(`Deleted session: ${sid}.`)
 		return
 	}
 	res.sendStatus(404)
 })
-function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
-	const index = array.findIndex(item => condition(item))
-	array.splice(index, 1)
-	console.log(`Array after deletion`, array)
-}
 
 
 // GET /api/poll/s/:sessionId
 router.get<SessionIdParam, StudentPollResponse>('/poll/s/:sid', validateSid, (req, res) => {
-	const s = sessions.find(x => x.sid === req.params.sid)!
+	const s = sessions.find(x => x.sid === req.params.sid)
 
 	res.send({
 		code: 200,
 		message: 'Ok',
-		questionActive: s.questionActive
+		questionActive: s?.questionActive ?? false
 	})
 })
+
 
 // GET /api/poll/t/:sessionId
 router.get<SessionIdParam, TeacherPollResponse>('/poll/t/:sid', validateSid, (req, res) => {
 	const s = sessions.find(x => x.sid === req.params.sid)!
+	// console.log(`Teacher poll session answers`, s.answers)
 
 	res.send({
 		code: 200,
 		message: 'Ok',
 		questionActive: s.questionActive,
-		participants: s.studentIds
+		participants: s.studentIds,
+		answers: s.answers
 	})
 })
 
@@ -147,17 +146,19 @@ router.delete<SessionIdParam, void | ErrorResponse>('/question/t/:sid', validate
 
 
 // POST /api/question/s/:sid, body: {value: number}
-router.post<SessionIdParam, void | ErrorResponse, Answer>('/question/s/:sid', validateSid, validateAnswer, (req, res) => {
+router.post<SessionIdParam, void | ErrorResponse, StudentAnswer>('/question/s/:sid', validateSid, validateAnswer, (req, res) => {
 	const s: ServerSession = sessions.find(x => x.sid === req.params.sid)!
-	const a: Answer = req.body
+	const a: StudentAnswer = req.body
 
-	const index = s.answers.findIndex(x => x.studentId === a.studentId)
+	const index = s.answers.findIndex(x => x.uid === a.uid)
 	if( index === -1 ) {
 		s.answers.push(a)
 		res.sendStatus(201)  // ny röst
+		console.log(`student post answer: 201`)
 	} else {
 		s.answers[index] = a
 		res.sendStatus(204)  // uppdaterat värde
+		console.log(`student post answer: 204`)
 	}
 })
 

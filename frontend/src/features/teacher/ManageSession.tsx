@@ -43,12 +43,15 @@ const ManageSession = ({  }: Props) => {
 	}
 
 	const handleCloseSession = async () => {
+		console.log(`manage session close 1`)
 		if( !s.isTeacher ) return
 
 		try {
+			console.log(`manage session close 2`)
 			const response = await fetch(`/api/session/${s.sid}`, {
 				method: 'DELETE'
 			})
+			console.log(`manage session close 3`, response.status)
 			if( response.status !== 204 ) {
 				console.log(`Error when closing session: ${response.status}.`)
 				return
@@ -56,7 +59,8 @@ const ManageSession = ({  }: Props) => {
 			set({
 				isTeacher: false,  // hack to show "start" button
 				uid: s.uid,
-				// sid: '', connectedCount: 0, lostCount: 0, messages: []
+				sid: ''
+				//  connectedCount: 0, lostCount: 0, messages: []
 			})
 		}
 		catch(error) {

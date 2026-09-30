@@ -1,11 +1,11 @@
 import type { Question } from "../../data/types"
-import { useStatistics } from "../../data/statistics"
+import { calcStatistics } from "../../data/statistics"
 import { displayScore } from "../../data/utils"
 
 type Props = { q: Question }
 
 const ViewResult = ({ q }: Props) => {
-	const { average } = useStatistics(q)
+	const { average } = calcStatistics(q)
 
 	// TODO: visa studentens egna svar också? visa bild i stället för text?
 	return (

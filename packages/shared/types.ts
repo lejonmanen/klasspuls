@@ -7,31 +7,41 @@ type Id = string;
 export type TeacherIdBody = { uid: Id; }
 export type StudentBody = { uid: Id; alias?: string; }
 export type SessionIdParam = { sid: Id; }
-export type StudentAnswer = { uid: Id; value: number; }
+export type StudentAnswer = z.infer<typeof studentAnswer>
 
 // Response from backend
-export type SessionIdResponse = { sid: Id; }
+export type SessionIdResponse = z.infer<typeof schemas.sessionIdResponse>
 export type IdResponse = { todo_id: Id; }
 export type ErrorResponse = { message: string; }
-export type StudentPollResponse = {
-	code: number;
-	message: string;
-	questionActive: boolean;
-}
-export type TeacherPollResponse = {
-	code: number;
-	message: string;
-	questionActive: boolean;
-	participants: Id[];  // students
-}
+export type StudentPollResponse = z.infer<typeof schemas.studentPollResponse>
+//  {
+// 	code: number;
+// 	message: string;
+// 	questionActive: boolean;
+// }
+export type TeacherPollResponse = z.infer<typeof schemas.teacherPollResponse>
 
+
+const studentAnswer = z.object({
+	uid: z.string(),
+	value: z.number()
+})
 
 export const schemas = {
 	sessionIdResponse: z.object({
 		sid: z.string()
 	}),
-	studentAnswer: z.object({
-		uid: z.string(),
-		value: z.number()
+	studentAnswer,
+	teacherPollResponse: z.object({
+		code: z.number(),
+		message: z.string(),
+		questionActive: z.boolean(),
+		participants: z.array(z.string()),
+		answers: z.array(studentAnswer)
+	}),
+	studentPollResponse: z.object({
+		code: z.number(),
+		message: z.string(),
+		questionActive: z.boolean()
 	})
 }
