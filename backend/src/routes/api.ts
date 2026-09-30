@@ -1,6 +1,7 @@
-import express from 'express'
+import express, { type RequestHandler } from 'express'
 import { generateId } from '../../../packages/shared/utils.ts'
-import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam } from '../../../packages/shared/types.ts'
+import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam, schemas } from '../../../packages/shared/types.ts'
+import * as z from 'zod'
 
 
 const router = express.Router()
@@ -32,6 +33,24 @@ router.get('/', (req, res) => {
 })
 
 type IdParam = { id: string; }
+
+
+const validateSid: RequestHandler = (req, res, next) => {
+	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
+	if( !s ) {
+		res.status(400).send({ message: 'Ingen pågående session.' })
+		return
+	}
+	next()
+}
+const validateAnswer: RequestHandler = (req, res, next) => {
+	const parsed = z.safeParse(schemas.studentAnswer, req.body)
+	if( !parsed.success ) {
+		res.status(400).send({ message: 'Felaktigt format på studentens svar.' })
+		return
+	}
+	next()
+}
 
 
 // POST /api/session, body: { id }
@@ -74,17 +93,8 @@ function deleteFromArray<T>(array: T[], condition: (t: T) => boolean): void {
 
 
 // GET /api/poll/s/:sessionId
-router.get<SessionIdParam, StudentPollResponse>('/poll/s/:sid', (req, res) => {
-	const sid = req.params.sid
-	const s = sessions.find(x => x.sid === sid)
-	if( !s) {
-		res.send({
-			code: 404,
-			message: 'No session or session closed.',
-			questionActive: false
-		})
-		return
-	}
+router.get<SessionIdParam, StudentPollResponse>('/poll/s/:sid', validateSid, (req, res) => {
+	const s = sessions.find(x => x.sid === req.params.sid)!
 
 	res.send({
 		code: 200,
@@ -94,18 +104,8 @@ router.get<SessionIdParam, StudentPollResponse>('/poll/s/:sid', (req, res) => {
 })
 
 // GET /api/poll/t/:sessionId
-router.get<SessionIdParam, TeacherPollResponse>('/poll/t/:sid', (req, res) => {
-	const sid = req.params.sid
-	const s = sessions.find(x => x.sid === sid)
-	if( !s ) {
-		res.send({
-			code: 404,
-			message: 'No session or session closed.',
-			questionActive: false,
-			participants: []
-		})
-		return
-	}
+router.get<SessionIdParam, TeacherPollResponse>('/poll/t/:sid', validateSid, (req, res) => {
+	const s = sessions.find(x => x.sid === req.params.sid)!
 
 	res.send({
 		code: 200,
@@ -117,15 +117,11 @@ router.get<SessionIdParam, TeacherPollResponse>('/poll/t/:sid', (req, res) => {
 
 
 // POST /api/question/t/:sessionId - sätt igång fråga
-router.post<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, res) => {
+router.post<SessionIdParam, void | ErrorResponse>('/question/t/:sid', validateSid, (req, res) => {
 	// om existerande fråga, felkod 400?
 	// annars starta ny fråga, kod 204
-	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
+	const s: ServerSession = sessions.find(x => x.sid === req.params.sid)!
 
-	if( !s ) {
-		res.status(400).send({ message: 'Starta en session innan du öppnar en fråga.' })
-		return
-	}
 	if( s.questionActive ) {
 		res.status(400).send({ message: 'Det finns redan en pågående fråga.' })
 		return
@@ -137,13 +133,9 @@ router.post<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, res)
 
 
 // DELETE /api/question/t/:sessionId - avsluta fråga
-router.delete<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, res) => {
-	const s: ServerSession | undefined = sessions.find(x => x.sid === req.params.sid)
+router.delete<SessionIdParam, void | ErrorResponse>('/question/t/:sid', validateSid, (req, res) => {
+	const s: ServerSession = sessions.find(x => x.sid === req.params.sid)!
 
-	if( !s ) {
-		res.status(400).send({ message: 'Starta en session innan du stänger en fråga.' })
-		return
-	}
 	if( !s.questionActive ) {
 		res.status(400).send({ message: 'Det finns ingen fråga att stänga.' })
 		return
@@ -151,5 +143,23 @@ router.delete<SessionIdParam, void | ErrorResponse>('/question/t/:sid', (req, re
 	s.questionActive = false
 	res.sendStatus(204)
 })
+
+
+
+// POST /api/question/s/:sid, body: {value: number}
+router.post<SessionIdParam, void | ErrorResponse, Answer>('/question/s/:sid', validateSid, validateAnswer, (req, res) => {
+	const s: ServerSession = sessions.find(x => x.sid === req.params.sid)!
+	const a: Answer = req.body
+
+	const index = s.answers.findIndex(x => x.studentId === a.studentId)
+	if( index === -1 ) {
+		s.answers.push(a)
+		res.sendStatus(201)  // ny röst
+	} else {
+		s.answers[index] = a
+		res.sendStatus(204)  // uppdaterat värde
+	}
+})
+
 
 export default router

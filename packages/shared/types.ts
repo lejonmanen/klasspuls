@@ -7,6 +7,7 @@ type Id = string;
 export type TeacherIdBody = { uid: Id; }
 export type StudentBody = { uid: Id; alias?: string; }
 export type SessionIdParam = { sid: Id; }
+export type StudentAnswer = { uid: Id; value: number; }
 
 // Response from backend
 export type SessionIdResponse = { sid: Id; }
@@ -28,5 +29,9 @@ export type TeacherPollResponse = {
 export const schemas = {
 	sessionIdResponse: z.object({
 		sid: z.string()
+	}),
+	studentAnswer: z.object({
+		uid: z.string(),
+		value: z.number()
 	})
 }
