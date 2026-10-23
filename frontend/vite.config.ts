@@ -8,9 +8,13 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  base: '/app/klasspuls/',
   server: {
 	proxy: {
-		'/api': 'http://localhost:3005'
+		'/app/klasspuls/api': {
+			target: 'http://localhost:3005',
+			rewrite: path => path.replace('/app/klasspuls', '')
+		}
 	}
   }
 })

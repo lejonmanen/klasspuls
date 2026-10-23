@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router"
 import '../App.css'
-// import ekg from '../public/ekg.png'
+import ekg from './ekg.png'
 
 type Props = {}
 
@@ -11,7 +11,7 @@ const Root = ({  }: Props) => {
 				<h1>
 					{/* TODO fixa till ekg-hjärtat */}
 					<NavLink to="/"> Klasspuls </NavLink>
-					<img src="/ekg.png" />
+					<img src={ekg} />
 				</h1>
 				<nav>
 					<NavLink to="/t"> Lärare </NavLink>

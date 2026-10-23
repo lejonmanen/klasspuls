@@ -1,6 +1,8 @@
 import * as z from 'zod'
 
 
+export type ReactSet<T> = (x: T) => void;
+
 type Id = string;
 
 // Sent from frontend

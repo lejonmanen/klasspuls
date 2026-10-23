@@ -1,5 +1,5 @@
-import type { StudentAnswer, TeacherPollResponse } from "../../../packages/shared/types";
-import type { QuestionResponse, QuestionS } from "./types"
+import type { /*StudentAnswer,*/ TeacherPollResponse } from "../../../packages/shared/types";
+import type { /*QuestionResponse,*/ AnswerStatus, Question, QuestionResponse, QuestionS } from "./types"
 
 type Result = {
 	average: number; valueCount: number; skips: number; max: number; min: number;
@@ -43,3 +43,24 @@ export function calcStatistics(poll: TeacherPollResponse, status: QuestionS): Re
 // 		return qr.data.answer
 // 	return NaN
 // }
+
+type Calc = {
+	average: number;
+	answerCount: number;
+	skipCount: number;
+}
+export function calcStudent(q: Question): Calc {
+	if( q.status !== "ended" ) {
+		return {average: NaN, answerCount: 0, skipCount: 0}
+	}
+	const f: QuestionResponse[] = q.responses.filter(r => r.data.status === "answered")
+	return {
+		average: asToNums(f.map(x => x.data)).reduce((cur, acc) => cur+acc, 0),
+		answerCount: f.length,
+		skipCount: q.responses.filter(r => r.data.status === "skipped").length
+	}
+}
+function asToNums(a: AnswerStatus[]): number[] {
+	return a.filter(x => x.status === "answered").map(y => y.answer)
+}
+

@@ -49,7 +49,7 @@ export type HistoryQuestion = {
 // 	anonymous: true;
 // 	status: AnswerStatus;
 // }
-type AnswerStatus =
+export type AnswerStatus =
 	| { status: 'pending'; }
 	| { status: 'answered'; answer: number; }
 	| { status: 'skipped'; };

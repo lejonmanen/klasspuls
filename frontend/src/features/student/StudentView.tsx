@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router"
 import { useStore } from "../../data/store"
-import type { QuestionResponse, QuestionS, Session, StudentSession } from "../../data/types"
+import type { QuestionS, Session, StudentSession } from "../../data/types"
 import ActiveQuestion from "./ActiveQuestion"
 import { useEffect } from "react"
 import { studentPoll } from "../../data/api-f"
