@@ -3,7 +3,7 @@ import type { Question, Session } from "../../data/types"
 import { calcStatistics } from "../../data/statistics"
 import { closeQuestion, openQuestion, teacherPoll } from "../../data/api-f"
 import { useEffect, useState } from "react"
-import type { TeacherPollResponse } from "../../../../packages/shared/types"
+import type { TeacherPollResponse } from "@klasspuls/shared/types"
 
 
 const pollInterval = 3000
@@ -92,7 +92,7 @@ const RealtimeResults = () => {
 						<p> Medel: {average} </p>
 					)}
 
-					{/* TODO: diagram */}
+					{/* TODO diagram */}
 				</div>
 			)}
 

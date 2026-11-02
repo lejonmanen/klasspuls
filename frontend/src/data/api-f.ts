@@ -1,4 +1,4 @@
-import { schemas, type ReactSet, type StudentPollResponse, type TeacherPollResponse } from "../../../packages/shared/types"
+import { schemas, type ReactSet, type StudentPollResponse, type TeacherPollResponse } from "@klasspuls/shared/types"
 import type { Session, TeacherSession } from "./types"
 import { getErrorMessage } from "./utils"
 import * as z from 'zod'

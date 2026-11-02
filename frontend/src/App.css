@@ -135,6 +135,12 @@ label { font-weight: bold; }
 }
 
 
+.teacher-view {
+	code {
+		overflow-wrap: anywhere;
+	}
+}
+
 /* Active question (student view) */
 .active-question {
 

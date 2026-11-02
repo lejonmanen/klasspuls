@@ -1,4 +1,4 @@
-import type { /*StudentAnswer,*/ TeacherPollResponse } from "../../../packages/shared/types";
+import type { TeacherPollResponse } from "@klasspuls/shared/types";
 import type { /*QuestionResponse,*/ AnswerStatus, Question, QuestionResponse, QuestionS } from "./types"
 
 type Result = {
@@ -7,8 +7,7 @@ type Result = {
 
 export function calcStatistics(poll: TeacherPollResponse, status: QuestionS): Result {
 	let average = NaN, valueCount = 0, skips = 0, max = NaN, min = NaN
-	// Skala: 1-5
-	// TODO: vilken statistik vill vi visa?
+	// Skala: 0-1
 	// Eftersom studenterna drar en markör på en skala när de röstar, kommer vi få decimala värden.
 	// medel, max, min, antal röster
 

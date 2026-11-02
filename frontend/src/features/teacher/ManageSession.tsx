@@ -1,3 +1,4 @@
+import { ClipboardList } from "lucide-react"
 import { closeSession, newSession } from "../../data/api-f"
 import { useStore } from "../../data/store"
 import type { Session } from "../../data/types"
@@ -9,7 +10,9 @@ const ManageSession = ({  }: Props) => {
 	const s: Session = useStore(state => state.session)
 	const set = useStore(state => state.setSession)
 
-
+	const handleCopy = async () => {
+		await navigator.clipboard.writeText(s.sid)
+	}
 
 	return (
 		<div className="manage-session">
@@ -19,7 +22,9 @@ const ManageSession = ({  }: Props) => {
 				<div className="column">
 					<button className="btn" onClick={() => closeSession(s, set)}> Avsluta session </button>
 
-					<p> Pågående session: <code> {s.sid} </code> </p>
+					<p> Pågående session: <code> {s.sid} </code>
+					<button title="Kopiera" className="btn icon" onClick={handleCopy}> <ClipboardList /> </button>
+					</p>
 					{/* {s.uid && <Link to={'/code/' + s.sid} className="btn" target="_blank"> Visa kod <ExternalLink /> </Link> } */}
 				</div>
 			) : (

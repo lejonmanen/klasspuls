@@ -1,0 +1,20 @@
+{
+  "name": "@klasspuls/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+	"./types": "./types.ts",
+	"./utils": "./utils.ts"
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "utils.ts",
+  "types": "types.ts",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}

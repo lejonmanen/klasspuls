@@ -4,14 +4,14 @@ import type { Session } from "../../data/types"
 
 const ManageInvites = () => {
 	const session: Session = useStore(state => state.session)
-	// TODO make backend serve frontend so this works
-	const localPath = 'http://localhost:3005'
-	// const localPath = ''
+	// TODO direct link to session does not work - check React Router
+	const joinPath = 'https://forverkliga.se/app/klasspuls/join'
+	// const path = 'https://forverkliga.se/app/klasspuls'
 	const code = session.isTeacher ? session.sid : null
-	const url = code ? `${localPath}/s/${code}` : 'Ingen session'
+	// const url = code ? `${path}/s/${code}` : 'Ingen session'
 
 	const handleCopy = async () => {
-		await navigator.clipboard.writeText(url)
+		await navigator.clipboard.writeText(joinPath)
 	}
 	if( !code ) return null
 
@@ -20,7 +20,7 @@ const ManageInvites = () => {
 			{code && (
 			<p className="row">
 				Dela länk till studenter:
-				<code> {url} </code>
+				<code> {joinPath} </code>
 				<button title="Kopiera" className="btn icon" onClick={handleCopy}> <ClipboardList /> </button>
 			</p>
 			)}

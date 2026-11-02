@@ -6,7 +6,7 @@ type Props = { q: Question }
 
 const ViewResult = ({ q }: Props) => {
 	const { average, answerCount, skipCount } = calcStudent(q)
-	// TODO: visa studentens egna svar också? visa bild i stället för text?
+	// TODO denna visas aldrig (visa studentens egna svar också? visa bild i stället för text?)
 	return (
 		<div className="view-result">
 			{ isNaN(average) ? (

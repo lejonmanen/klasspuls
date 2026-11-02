@@ -14,5 +14,5 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "workspaces": ["backend", "frontend"]
+  "workspaces": ["backend", "frontend", "packages/*"]
 }

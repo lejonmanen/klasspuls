@@ -1,6 +1,6 @@
 import express, { type RequestHandler } from 'express'
-import { generateId } from '../../../packages/shared/utils.ts'
-import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam, schemas, type StudentAnswer } from '../../../packages/shared/types.ts'
+import { generateId } from '@klasspuls/shared/utils'
+import { type ErrorResponse, type TeacherIdBody, type IdResponse, type SessionIdResponse, type StudentBody, type StudentPollResponse, type TeacherPollResponse, type SessionIdParam, schemas, type StudentAnswer } from '@klasspuls/shared/types'
 import * as z from 'zod'
 
 
@@ -17,7 +17,7 @@ type ServerSession = {
 const sessions: ServerSession[] = []
 
 // TODO route to remove participant from session so we know how many are still active
-// TODO add date/time created to session to remove older sessions after a while
+// TODO [Local Express] add date/time created to session to remove older sessions after a while
 
 
 
@@ -78,7 +78,7 @@ router.delete<SessionIdParam, void>('/session/:sid', (req, res) => {
 	if( s ) {
 		sessions.splice(0, sessions.length)
 		console.log(`Deleted all sessions`)
-		// LATER don't delete all sessions every time
+		// LATER [Local Express] don't delete all sessions every time (local Express)
 		// deleteFromArray(sessions, x => x.sid !== sid)
 		// res.sendStatus(204)
 		// console.log(`Deleted session: ${sid}.`)
