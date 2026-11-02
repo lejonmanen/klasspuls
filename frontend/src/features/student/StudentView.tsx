@@ -41,6 +41,7 @@ const StudentView = () => {
 		nav('/')
 	}
 
+	// TODO ansluter inte automatiskt om läraren stänger frågan och startar en ny (dev, Express)
 	return (
 		<div className="student-view">
 			<div>
@@ -57,10 +58,10 @@ const StudentView = () => {
 				</>
 			)}
 
-			<hr />
+			{/* <hr />
 			debug: <button onClick={() => setQ("unstarted")}> unstarted </button>
 			<button onClick={() => setQ("active")}> active </button>
-			<button onClick={() => setQ("ended")}> ended </button>
+			<button onClick={() => setQ("ended")}> ended </button> */}
 		</div>
 	)
 }

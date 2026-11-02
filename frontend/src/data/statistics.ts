@@ -19,13 +19,13 @@ export function calcStatistics(poll: TeacherPollResponse, status: QuestionS): Re
 	const actualScores = scores.filter(s => !isNaN(s))
 	valueCount = actualScores.length
 	skips = scores.length - actualScores.length
-	// console.log(`use statistics`, q, q.responses, scores, actualScores)
 
 	let sum = 0
 	actualScores.forEach(s => {
 		if( isNaN(min) ) {
 			min = s
 			max = s
+			sum += s
 			return
 		}
 		sum += s

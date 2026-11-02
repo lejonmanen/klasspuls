@@ -113,6 +113,13 @@ label { font-weight: bold; }
 	.lucide {
 		height: 1.2em;
 	}
+
+	&:disabled {
+		background-color: var(--c7);
+		color: var(--c6);
+		box-shadow: 0px 0px 3px 1px var(--c6);
+		cursor: not-allowed;
+	}
 }
 
 
@@ -124,5 +131,14 @@ label { font-weight: bold; }
 		&:hover {
 			background-color: var(--c4);
 		}
+	}
+}
+
+
+/* Active question (student view) */
+.active-question {
+
+	.answer-button {
+
 	}
 }

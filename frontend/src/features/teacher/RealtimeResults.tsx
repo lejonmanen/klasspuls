@@ -69,7 +69,6 @@ const RealtimeResults = () => {
 	// LATER: använd övriga statistiken: valueCount, skips, max, min
 	// @ts-expect-error
 	const { average, valueCount, skips, max, min } = calcStatistics(poll, q.status)
-
 	// console.log('RealtimeResults: ', average, valueCount, skips, max, min)
 	// Poll results are in "poll" and "q"
 	// poll: code, message, questionActive, participants, answers
